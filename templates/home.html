@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{{ guitar.name }}{% endblock title %}
+
+{% block content %}
+<h1>Hello {{ request.user.username }}!</h1>
+<hr>
+<p>About</p>
+<!-- add form here -->
+<p>-- First name</p>
+<p>-- Last name</p>
+<p>-- Phone</p>
+<p>-- Email</p>
+<hr>
+{% if addresses %}
+<h2>Your shipping addresses:</h2>
+<ul>
+{% for address in addresses %}
+    <li>
+        {{ address }}
+        <a href="{% url "accounts:address_edit" address.pk %}">Edit</a>
+        |
+        <a href="{% url "accounts:address_delete" address.pk %}">Delete</a>
+    </li>
+{% endfor %}
+</ul>
+{% else %}
+<h2>You have no saved shipping addresses.</h2>
+{% endif %}
+<p>
+    <a href="{% url "accounts:address_new" %}">Add address</a>
+</p>
+{% endblock content %}

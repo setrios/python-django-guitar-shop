@@ -1,5 +1,16 @@
 <header>
-    <hr>
-    <h3>header</h3>
-    <hr>
+    <nav class="nav">
+        <a class="nav-link" href="{% url "products:guitar_list" %}">Catalog</a>
+        <a class="nav-link" href="">Cart</a>
+        {% if request.user.is_authenticated %}
+        <a class="nav-link" href="{% url "accounts:home" %}">{{ request.user.username }}</a>
+        <form action="{% url "logout" %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link">Log Out</button>
+        </form>
+        {% else %}
+        <a class="nav-link" href="{% url "login" %}">Log In</a>
+        <a class="nav-link" href="{% url "accounts:signup" %}">Sign Up</a>
+        {% endif %}
+    </nav>
 </header>

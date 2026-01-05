@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Delete address: {{ shippingaddress }}{% endblock title %}
+
+{% block content %}
+<h1>Delete address</h1>
+<hr>
+<form action="" method="post">
+    {% csrf_token %}
+    <p>Are you sure you want to delete address: <b>{{ shippingaddress }}</b>?</p>
+    <button type="submit" class="btn btn-danger">Delete</button>
+</form>
+{% endblock content %}

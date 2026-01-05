@@ -41,8 +41,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'products'
+    # 3rd party
+    'crispy_forms',
+    'crispy_bootstrap5',
+    # local
+    'products',
+    'accounts'
 ]
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -120,6 +127,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+# Login / Loguot urls
+
+LOGIN_REDIRECT_URL = 'products:guitar_list'
+LOGOUT_REDIRECT_URL = 'products:guitar_list'
+
+
+# Crispy
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 
 # Media files (images)
