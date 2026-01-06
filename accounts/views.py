@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import ShippingAddress
 
 # Create your views here.
@@ -12,10 +12,15 @@ class SignUpView(CreateView):
     form_class = CustomUserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
-    
 
-class HomePageView(LoginRequiredMixin, TemplateView):
+
+class HomePageView(LoginRequiredMixin, UpdateView):
     template_name = 'home.html'
+    form_class = CustomUserChangeForm
+    success_url = reverse_lazy('accounts:home')
+
+    def get_object(self):
+        return self.request.user
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
