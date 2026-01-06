@@ -52,7 +52,7 @@ class GuitarType(models.Model):
         return self.guitar_type_name
     
 
-class Accesory(models.Model):
+class Accessory(models.Model):
     image = models.ImageField(upload_to='accessories/')
     name = models.CharField(max_length=255)
     brand = models.ForeignKey('Brand', on_delete=models.CASCADE)

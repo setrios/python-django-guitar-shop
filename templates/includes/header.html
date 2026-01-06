@@ -1,16 +1,39 @@
-<header>
-    <nav class="nav">
-        <a class="nav-link" href="{% url "products:guitar_list" %}">Catalog</a>
-        <a class="nav-link" href="">Cart</a>
-        {% if request.user.is_authenticated %}
-        <a class="nav-link" href="{% url "accounts:home" %}">{{ request.user.username }}</a>
-        <form action="{% url "logout" %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-link">Log Out</button>
-        </form>
-        {% else %}
-        <a class="nav-link" href="{% url "login" %}">Log In</a>
-        <a class="nav-link" href="{% url "accounts:signup" %}">Sign Up</a>
-        {% endif %}
-    </nav>
-</header>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'products:guitar_list' %}">Guitar Shop</a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'products:guitar_list' %}">Catalog</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="">Cart</a>
+                </li>
+                
+                {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:home' %}">{{ request.user.username }}</a>
+                </li>
+                <li class="nav-item">
+                    <form action="{% url 'logout' %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link nav-link">Log Out</button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:signup' %}">Sign Up</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

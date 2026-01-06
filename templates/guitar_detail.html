@@ -3,9 +3,17 @@
 {% block title %}{{ guitar.name }}{% endblock title %}
 
 {% block content %}
-<img src="{{ guitar.image.url }}" alt="">
-<h4>{{ guitar.name }}</h4>
-<p>{{ guitar.brand }}</p>
-<p>${{ guitar.price }}</p>
-<p>{{ guitar.description }}</p>
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <img src="{{ guitar.image.url }}" class="img-fluid" alt="{{ guitar.name }}">
+    </div>
+    
+    <div class="col-md-6">
+        <h1>{{ guitar.name }}</h1>
+        <p class="text-muted">{{ guitar.brand }}</p>
+        <h3 class="mb-3">${{ guitar.price }}</h3>
+        <p>{{ guitar.description }}</p>
+        <button class="btn btn-primary">Add to Cart</button>
+    </div>
+</div>
 {% endblock content %}

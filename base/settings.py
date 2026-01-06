@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     # local
     'products',
-    'accounts'
+    'accounts',
+    'cart'
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'

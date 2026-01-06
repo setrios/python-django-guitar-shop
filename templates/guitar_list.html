@@ -3,16 +3,22 @@
 {% block title %}Guitar Catalog{% endblock title %}
 
 {% block content %}
-{% for guitar in guitar_list %}
-    <div class="card">
-        <img src="{{ guitar.image.url }}" class="card-img-top" alt="">
-        <div class="card-body">
-            <h4 class="card-title">
-                <a href="{{ guitar.get_absolute_url }}">{{ guitar.name }}</a>
-            </h4>
-            <p class="card-text">{{ guitar.brand }}</p>
-            <p class="card-text">${{ guitar.price }}</p>
+<h1 class="mb-4">Guitar Catalog</h1>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for guitar in guitar_list %}
+    <div class="col">
+        <div class="card h-100">
+            <img src="{{ guitar.image.url }}" class="card-img-top" alt="{{ guitar.name }}" style="height: 250px; object-fit: cover;">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{{ guitar.get_absolute_url }}" class="text-decoration-none">{{ guitar.name }}</a>
+                </h5>
+                <p class="card-text text-muted">{{ guitar.brand }}</p>
+                <p class="card-text">${{ guitar.price }}</p>
+            </div>
         </div>
     </div>
-{% endfor %}
+    {% endfor %}
+</div>
 {% endblock content %}

@@ -7,8 +7,8 @@
 {% block content %}
 <h1>Hello {{ request.user.username }}!</h1>
 <hr>
+
 <div class="row">
-    <!-- LEFT COLUMN: About form -->
     <div class="col-md-6">
         <h3>About</h3>
         <form action="" method="post">
@@ -16,34 +16,32 @@
             {{ form|crispy }}
             <button type="submit" class="btn btn-success">Save</button>
         </form>
-        <a href="{% url 'password_change' %}">Change password</a>
-        <a href="{% url 'password_reset' %}">Reset password</a>
-
+        <div class="mt-3">
+            <a href="{% url 'password_change' %}" class="d-block">Change password</a>
+            <a href="{% url 'password_reset' %}" class="d-block">Reset password</a>
+        </div>
     </div>
 
-    <!-- RIGHT COLUMN: Addresses -->
     <div class="col-md-6">
         <h3>Your shipping addresses</h3>
 
         {% if addresses %}
             <ul class="list-group mb-3">
                 {% for address in addresses %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ address }}
-                        <span>
-                            <a href="{% url 'accounts:address_edit' address.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                            <a href="{% url 'accounts:address_delete' address.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
-                        </span>
-                    </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ address }}
+                    <span>
+                        <a href="{% url 'accounts:address_edit' address.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <a href="{% url 'accounts:address_delete' address.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </span>
+                </li>
                 {% endfor %}
             </ul>
         {% else %}
             <p>You have no saved shipping addresses.</p>
         {% endif %}
 
-        <a href="{% url 'accounts:address_new' %}" class="btn btn-primary">
-            Add address
-        </a>
+        <a href="{% url 'accounts:address_new' %}" class="btn btn-primary">Add address</a>
     </div>
 </div>
 {% endblock content %}

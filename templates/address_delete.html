@@ -9,7 +9,7 @@
 <hr>
 <form action="" method="post">
     {% csrf_token %}
-    <p>Are you sure you want to delete address: <b>{{ shippingaddress }}</b>?</p>
+    <p>Are you sure you want to delete address: <strong>{{ shippingaddress }}</strong>?</p>
     <button type="submit" class="btn btn-danger">Delete</button>
 </form>
 {% endblock content %}
