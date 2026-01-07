@@ -142,7 +142,7 @@ class Cart():
                 })
 
         for accessory_pk, data in self.cart['accessories'].items():
-            if product_pk in accessories:
+            if accessory_pk in accessories:
                 cart_items.append({
                     'item': accessories[accessory_pk],
                     'quantity': data['quantity'],
@@ -159,24 +159,24 @@ class Cart():
     #         item = Guitar.objects.get(pk=product_pk)
     #         quantity = product_entry_data['quantity']
     #         item_total = Decimal(product_entry_data['item_total'])
-
+    #
     #         cart_items.append({
     #             'item': item,
     #             'quantity': quantity,
     #             'item_total': item_total
     #         })
-        
+    #
     #     for accessory_pk, accessory_entry_data in self.cart['accessories'].items():
     #         item = Accessory.objects.get(pk=accessory_pk)
     #         quantity = accessory_entry_data['quantity']
     #         item_total = Decimal(accessory_entry_data['item_total'])
-
+    #
     #         cart_items.append({
     #             'item': item,
     #             'quantity': quantity,
     #             'item_total': item_total
     #         })
-
+    #
     #     return cart_items
 
 
@@ -196,3 +196,26 @@ class Cart():
             return products_count + accessories_count
         else:
             return 0
+        
+    def __iter__(self):
+        product_pks = self.cart['products'].keys()
+        accessory_pks = self.cart['accessories'].keys()
+
+        products = {str(p.pk): p for p in Guitar.objects.filter(pk__in=product_pks)}
+        accessories = {str(a.pk): a for a in Accessory.objects.filter(pk__in=accessory_pks)}
+
+        for product_pk, data in self.cart['products'].items():
+            if product_pk in products:
+                yield {
+                    'item': products[product_pk],
+                    'quantity': data['quantity'],
+                    'item_total': Decimal(data['item_total'])
+                }
+
+        for accessory_pk, data in self.cart['accessories'].items():
+            if accessory_pk in accessories:
+                yield {
+                    'item': accessories[accessory_pk],
+                    'quantity': data['quantity'],
+                    'item_total': Decimal(data['item_total'])
+                }

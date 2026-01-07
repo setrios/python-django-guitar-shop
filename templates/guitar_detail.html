@@ -13,7 +13,129 @@
         <p class="text-muted">{{ guitar.brand }}</p>
         <h3 class="mb-3">${{ guitar.price }}</h3>
         <p>{{ guitar.description }}</p>
-        <button class="btn btn-primary">Add to Cart</button>
+        <div id="cart-notification" class="alert d-none" role="alert"></div>
+        <form id="add-to-cart-form" data-action-url="{% url 'cart:add_product' guitar.pk %}">
+            {% csrf_token %}
+            <label for="quantity" class="form-label">Quantity:</label>
+            <input 
+                type="number" 
+                id="quantity"
+                name="quantity" 
+                value="1"
+                min="1" 
+                max="99"
+                class="form-control w-25"
+                required
+            >
+            <button type="submit" id="add-cart-btn" class="btn btn-primary mt-3">
+                Add to Cart
+            </button>
+        </form>
     </div>
 </div>
+
+<!-- sending AJAX with vanilla JS -->
+<script>
+    const getCookie = (name) => {
+        let cookieValue = null
+        
+        if (document.cookie && document.cookie !== ''){
+            const cookies = document.cookie.split(';')
+
+            for (let i = 0; i < cookies.length; i++){
+                const cookie = cookies[i].trim()
+            
+                if (cookie.substring(0, name.length + 1) === `${name}=`){
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+                    break
+                }
+            }
+        }
+
+        return cookieValue
+    }
+
+    const showNotification = (message, type = 'success') => {
+        const notification = document.getElementById('cart-notification')
+
+        notification.textContent = message
+        notification.className = `alert alert-${type}`
+        notification.classList.remove('d-none')
+
+        setTimeout(() => {
+            notification.classList.add('d-none')
+        }, 3000)
+
+    }
+
+    const updateCartCount = (count) => {
+        const cartCountElement = document.querySelector('.cart-count')
+
+        if (cartCountElement) {
+            cartCountElement.textContent = count
+
+            // Add animation
+            cartCountElement.classList.add('animate-bounce')
+            setTimeout(() => {
+                cartCountElement.classList.remove('animate-bounce')
+            }, 500)
+        }
+    }
+
+    const handleAddToCart = async (event) => {
+        event.preventDefault()
+
+        const form = event.target
+        const button = form.querySelector('#add-cart-btn')
+        const originalButtonText = button.textContent
+
+        // get URL from data attribute (set by Django template)
+        const url = form.dataset.actionUrl;
+        
+        // disable button and show loading state
+        button.disabled = true;
+        button.textContent = 'Adding...';
+
+        try {
+            const formData = new FormData(form)
+            const csrfToken = getCookie('csrftoken')
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+
+            const data = await response.json()
+
+            if (response.ok && data.success) {
+                showNotification(data.message, 'success')
+                updateCartCount(data.cart_count)
+
+                form.querySelector('#quantity').value = 1
+            }
+            else {
+                showNotification(data.error || 'Failed to add item to cart', 'danger')
+            }
+        }
+        catch (error) {
+            console.error('Error adding to cart:', error)
+            showNotification('An error occurred. Please try again.', 'danger')
+        }
+        finally {
+            button.disabled = false;
+            button.textContent = originalButtonText;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('add-to-cart-form')
+
+        if (form) {
+            form.addEventListener('submit', handleAddToCart)
+        }
+    })
+</script>
 {% endblock content %}
