@@ -8,45 +8,86 @@
     $<span id="cart-subtotal">{{ cart.get_sub_total_price }}</span>
 </h1>
 
-<div class="row g-4">
-    {% for cart_entry in cart %}
-    <div class="col">
-        <div class="card" id="card-{{forloop.counter}}">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="{{ cart_entry.item.image.url }}" class="card-img-top" alt="{{ cart_entry.item.name }}"
-                        style="height: 250px; object-fit: cover;">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="{{ cart_entry.item.get_absolute_url }}" class="text-decoration-none">{{ cart_entry.item.name }}</a>
-                        </h5>
-                        <p class="card-text text-muted">{{ cart_entry.quantity }} x ${{ cart_entry.item.price }}</p>
-                        <p>
-                            <button class="btn btn-outline-primary qty-btn" data-action="decrease"
-                                data-item-id="{{ cart_entry.item.id }}">-</button>
+<div>
+    {% for cart_entry in cart.products %}
+    <div class="card mb-4" id="card-product-{{forloop.counter}}">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ cart_entry.item.image.url }}" class="card-img-top" alt="{{ cart_entry.item.name }}"
+                    style="height: 250px; object-fit: cover;">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{{ cart_entry.item.get_absolute_url }}" class="text-decoration-none">{{ cart_entry.item.name }}</a>
+                    </h5>
+                    <p class="card-text text-muted">{{ cart_entry.quantity }} x ${{ cart_entry.item.price }}</p>
+                    <p>
+                        <button class="btn btn-outline-primary qty-btn" data-action="decrease"
+                            data-item-id="{{ cart_entry.item.id }}">-</button>
 
-                            <button class="btn btn-outline-primary qty-btn" data-action="increase"
-                                data-item-id="{{ cart_entry.item.id }}">+</button>
-                        </p>
-                        <p class="card-text text-success">${{ cart_entry.item_total }}</p>
-                        <p>
-                        <form class="delete-from-cart-form"
-                            data-action-url="{% url 'cart:delete_product' cart_entry.item.pk %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="card-id" value="{{ forloop.counter }}">
-                            <button type="submit" class="btn btn-outline-danger delete-btn">
-                                Delete
-                            </button>
-                        </form>
-                        </p>
-                    </div>
+                        <button class="btn btn-outline-primary qty-btn" data-action="increase"
+                            data-item-id="{{ cart_entry.item.id }}">+</button>
+                    </p>
+                    <p class="card-text text-success">${{ cart_entry.item_total }}</p>
+                    <p>
+                    <form class="delete-from-cart-form"
+                        data-action-url="{% url 'cart:delete_product' cart_entry.item.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="card-id" value="{{ forloop.counter }}">
+                        {% comment %} <input type="hidden" name="item-type" value="product"> {% endcomment %}
+                        <button type="submit" class="btn btn-outline-danger delete-btn">
+                            Delete
+                        </button>
+                    </form>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
     {% endfor %}
+    <hr class="m-4">
+    {% for cart_entry in cart.accessories %}
+    <div class="card mb-4" id="card-accessory-{{forloop.counter}}">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ cart_entry.item.image.url }}" class="card-img-top" alt="{{ cart_entry.item.name }}"
+                    style="height: 250px; object-fit: cover;">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{{ cart_entry.item.get_absolute_url }}" class="text-decoration-none">{{ cart_entry.item.name }}</a>
+                    </h5>
+                    <p class="card-text text-muted">{{ cart_entry.quantity }} x ${{ cart_entry.item.price }}</p>
+                    <p>
+                        <button class="btn btn-outline-primary qty-btn" data-action="decrease"
+                            data-item-id="{{ cart_entry.item.id }}">-</button>
+
+                        <button class="btn btn-outline-primary qty-btn" data-action="increase"
+                            data-item-id="{{ cart_entry.item.id }}">+</button>
+                    </p>
+                    <p class="card-text text-success">${{ cart_entry.item_total }}</p>
+                    <p>
+                    <form class="delete-from-cart-form"
+                        data-action-url="{% url 'cart:delete_accessory' cart_entry.item.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="card-id" value="{{ forloop.counter }}">
+                        {% comment %} <input type="hidden" name="item-type" value="accessory"> {% endcomment %}
+                        <button type="submit" class="btn btn-outline-danger delete-btn">
+                            Delete
+                        </button>
+                    </form>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div>
+    <button class="btn btn-success">Checkout</button>
 </div>
 
 <!-- sending AJAX with vanilla JS -->
@@ -151,7 +192,7 @@
 
         btn.disabled = true
 
-        const response = await fetch(`/cart/update/${itemId}/`, {
+        const response = await fetch(`/cart/product/update/${itemId}/`, {
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken'),

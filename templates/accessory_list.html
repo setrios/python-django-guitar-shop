@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
-{% block title %}Guitar Catalog{% endblock title %}
+{% block title %}Accessory Catalog{% endblock title %}
 {% block content %}
-<h1 class="mb-4">Guitar Catalog</h1>
+<h1 class="mb-4">Accessory Catalog</h1>
 <div class="row">
     <!-- Left sidebar with filters -->
     <aside class="col-3">
@@ -15,12 +15,12 @@
     <!-- Right content area with horizontal cards -->
     <div class="col-9">
         <div class="d-flex flex-column gap-3">
-            {% for guitar in guitar_list %}
+            {% for accessory in accessory_list %}
             <div class="card">
                 <div class="row g-0 h-100">
                     <div class="col-4 d-flex align-items-center">
-                        <img src="{{ guitar.image.url }}"
-                            alt="{{ guitar.name }}"
+                        <img src="{{ accessory.image.url }}"
+                            alt="{{ accessory.name }}"
                             class="h-100"
                             style="max-height: 100%;
                                 max-width: 100%;
@@ -31,10 +31,10 @@
                     <div class="col-8">
                         <div class="card-body h-100 d-flex flex-column">
                             <h5 class="card-title">
-                                <a href="{{ guitar.get_absolute_url }}" class="text-decoration-none">{{ guitar.name }}</a>
+                                <a href="{{ accessory.get_absolute_url }}" class="text-decoration-none">{{ accessory.name }}</a>
                             </h5>
-                            <p class="card-text text-muted">{{ guitar.brand }}</p>
-                            <p class="card-text">${{ guitar.price }}</p>
+                            <p class="card-text text-muted">{{ accessory.brand }}</p>
+                            <p class="card-text">${{ accessory.price }}</p>
                         </div>
                     </div>
                 </div>

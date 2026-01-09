@@ -260,3 +260,30 @@ class Cart():
                     'quantity': data['quantity'],
                     'item_total': Decimal(data['item_total'])
                 }
+
+
+    def products(self):
+        product_pks = self.cart['products'].keys()
+
+        products = {str(p.pk): p for p in Guitar.objects.filter(pk__in=product_pks)}
+
+        for product_pk, data in self.cart['products'].items():
+            if product_pk in products:
+                yield {
+                    'item': products[product_pk],
+                    'quantity': data['quantity'],
+                    'item_total': Decimal(data['item_total'])
+                }
+
+    def accessories(self):
+        accessory_pks = self.cart['accessories'].keys()
+
+        accessories = {str(a.pk): a for a in Accessory.objects.filter(pk__in=accessory_pks)}
+
+        for accessory_pk, data in self.cart['accessories'].items():
+            if accessory_pk in accessories:
+                yield {
+                    'item': accessories[accessory_pk],
+                    'quantity': data['quantity'],
+                    'item_total': Decimal(data['item_total'])
+                }

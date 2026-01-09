@@ -109,3 +109,61 @@ def update_product_quantity(request, product_pk):
             'error': str(e)
         }, status=400)
 
+@require_POST
+def add_accessory_ajax(request, accessory_pk):
+    # Check if it's an AJAX request
+    if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid request'
+        }, status=400)
+    
+    # get the product
+    accessory = get_object_or_404(Accessory, pk=accessory_pk)
+
+    # get and validate quantity
+    try: 
+        quantity = int(request.POST.get('quantity', 1))
+    except (ValueError, TypeError):
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid quantity'
+        }, status=400)
+    
+    # validate quantity range
+    if quantity < 1 or quantity > 99:
+        return JsonResponse({
+            'success': False,
+            'error': 'Quantity must be between 1 and 99'
+        }, status=400)
+    
+    # Add to cart
+    cart = Cart(request)
+    cart.add_accessory(accessory=accessory, quantity=quantity)
+
+    return JsonResponse({
+        'success': True,
+        'message': f'Added {quantity} x {accessory.name} to cart',
+        'cart_count': len(cart),
+        'cart_total': str(cart.get_sub_total_price())
+    })
+
+@require_POST
+def delete_accessory(request, accessory_pk):
+    # Check if it's an AJAX request
+    if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid request'
+        }, status=400)
+    
+    cart = Cart(request)
+    guitar = get_object_or_404(Accessory, pk=accessory_pk)
+    cart.remove_accessory(guitar)
+    
+    return JsonResponse({
+        'success': True,
+        'message': f'Removed {guitar.name} from cart',
+        'cart_count': len(cart),
+        'cart_total': str(cart.get_sub_total_price())
+    })
