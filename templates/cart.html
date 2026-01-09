@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1 class="mb-4">
-    Cart: 
+    Cart:
     $<span id="cart-subtotal">{{ cart.get_sub_total_price }}</span>
 </h1>
 
@@ -14,7 +14,8 @@
         <div class="card" id="card-{{forloop.counter}}">
             <div class="row g-0">
                 <div class="col-md-4">
-                    <img src="{{ cart_entry.item.image.url }}" class="card-img-top" alt="{{ cart_entry.item.name }}" style="height: 250px; object-fit: cover;">
+                    <img src="{{ cart_entry.item.image.url }}" class="card-img-top" alt="{{ cart_entry.item.name }}"
+                        style="height: 250px; object-fit: cover;">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
@@ -23,12 +24,16 @@
                         </h5>
                         <p class="card-text text-muted">{{ cart_entry.quantity }} x ${{ cart_entry.item.price }}</p>
                         <p>
-                            <button class="btn btn-outline-primary">-</button>
-                            <button class="btn btn-outline-primary">+</button>
+                            <button class="btn btn-outline-primary qty-btn" data-action="decrease"
+                                data-item-id="{{ cart_entry.item.id }}">-</button>
+
+                            <button class="btn btn-outline-primary qty-btn" data-action="increase"
+                                data-item-id="{{ cart_entry.item.id }}">+</button>
                         </p>
                         <p class="card-text text-success">${{ cart_entry.item_total }}</p>
                         <p>
-                            <form class="delete-from-cart-form" data-action-url="{% url 'cart:delete_product' cart_entry.item.pk %}">
+                        <form class="delete-from-cart-form"
+                            data-action-url="{% url 'cart:delete_product' cart_entry.item.pk %}">
                             {% csrf_token %}
                             <input type="hidden" name="card-id" value="{{ forloop.counter }}">
                             <button type="submit" class="btn btn-outline-danger delete-btn">
@@ -48,14 +53,14 @@
 <script>
     const getCookie = (name) => {
         let cookieValue = null
-        
-        if (document.cookie && document.cookie !== ''){
+
+        if (document.cookie && document.cookie !== '') {
             const cookies = document.cookie.split(';')
 
-            for (let i = 0; i < cookies.length; i++){
+            for (let i = 0; i < cookies.length; i++) {
                 const cookie = cookies[i].trim()
-            
-                if (cookie.substring(0, name.length + 1) === `${name}=`){
+
+                if (cookie.substring(0, name.length + 1) === `${name}=`) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
                     break
                 }
@@ -91,7 +96,7 @@
         if (element) {
             element.remove();
             console.log(`Element with ID "${elementId}" removed.`);
-        } 
+        }
         else {
             console.log(`Element with ID "${elementId}" not found.`);
         }
@@ -123,25 +128,63 @@
                 removeCard(cardId)
                 updateCartCount(data.cart_count)
                 updateSubtotal(data.cart_total)
-            } 
+
+                location.reload() // do reload page
+            }
             else {
                 alert(data.error || 'Delete failed');
             }
-        } 
+        }
         catch (err) {
             console.error(err);
             alert('Server error');
-        } 
+        }
         finally {
             button.disabled = false;
         }
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.delete-from-cart-form')
-            .forEach(form => {
-                form.addEventListener('submit', handleDeleteFromCart)
+    const handleQuantityUpdate = async (event) => {
+        const btn = event.currentTarget
+        const action = btn.dataset.action
+        const itemId = btn.dataset.itemId
+
+        btn.disabled = true
+
+        const response = await fetch(`/cart/update/${itemId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                action: action
             })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            updateCartCount(data.cart_count);
+            updateSubtotal(data.cart_total);
+
+            location.reload() // do reload page
+        }
+        else {
+            alert(data.error || 'Update failed');
+        }
+
+        btn.disabled = false;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.delete-from-cart-form').forEach(form => {
+            form.addEventListener('submit', handleDeleteFromCart)
+        })
+        document.querySelectorAll('.qty-btn').forEach(btn => {
+            btn.addEventListener('click', handleQuantityUpdate)
+        })
     })
 </script>
 {% endblock content %}

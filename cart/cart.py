@@ -99,6 +99,26 @@ class Cart():
 
         self.session.modified = True
 
+    def change_product(self, product: Guitar, to_add):
+        '''Method to increment or decrement product quantity'''
+        product_pk = str(product.pk)
+
+        if product_pk not in self.cart['products']:
+            raise ValueError(f'{product.name} is not in cart')
+        
+        new_quantity = self.cart['products'][product_pk]['quantity'] + to_add
+
+        if new_quantity > product.stock:
+            raise ValueError(f'Not enough stock for {product.name}')
+        
+        if new_quantity <= 0:
+            self.remove_product(product)
+        else:
+            self.cart['products'][product_pk]['quantity'] = new_quantity
+            self.cart['products'][product_pk]['item_total'] = self.__count_item_total(product.price, new_quantity)
+
+        self.session.modified = True
+
 
     def update_accessory(self, accessory: Accessory, quantity):
         '''quantity: int - new absolute qunatity been set, not relative'''
@@ -115,6 +135,27 @@ class Cart():
         else:
             raise ValueError(f'{accessory.name} is not in cart')
         
+        self.session.modified = True
+
+
+    def change_accessory(self, accessory: Accessory, to_add):
+        '''Method to increment or decrement accessory quantity'''
+        accessory_pk = str(accessory.pk)
+
+        if accessory_pk not in self.cart['accessories']:
+            raise ValueError(f'{accessory.name} is not in cart')
+        
+        new_quantity = self.cart['accessories'][accessory_pk]['quantity'] + to_add
+
+        if new_quantity > accessory.stock:
+            raise ValueError(f'Not enough stock for {accessory.name}')
+        
+        if new_quantity <= 0:
+            self.remove_product(accessory)
+        else:
+            self.cart['accessories'][accessory_pk]['quantity'] = new_quantity
+            self.cart['accessories'][accessory_pk]['item_total'] = self.__count_item_total(accessory.price, new_quantity)
+
         self.session.modified = True
 
 

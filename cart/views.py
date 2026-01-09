@@ -72,3 +72,40 @@ def delete_product(request, product_pk):
         'cart_total': str(cart.get_sub_total_price())
     })
 
+
+@require_POST
+def update_product_quantity(request, product_pk):
+    # Check if it's an AJAX request
+    if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid request'
+        }, status=400)
+    
+    cart = Cart(request)
+    guitar = get_object_or_404(Guitar, pk=product_pk)
+    action = request.POST.get('action')
+
+    try:
+        if action == 'increase':
+            cart.change_product(guitar, 1)
+        elif action == 'decrease':
+            cart.change_product(guitar, -1) 
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid action'
+            }, status=400)
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Updated {guitar.name} quantity.',
+            'cart_count': len(cart),
+            'cart_total': str(cart.get_sub_total_price())
+        })
+    except ValueError as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=400)
+
