@@ -5,36 +5,108 @@
 {% block title %}Checkout{% endblock title %}
 
 {% block content %}
-<h1 class="mb-4">Checkout</h1>
+<h1 class="mb-4">
+    Checkout:
+    $<span id="cart-subtotal">{{ total }}</span>
+</h1>
+
+{% if messages %}
+    <div class="messages mb-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="row">
-    <!-- Left sidebar with filters -->
+    <!-- Left sidebar with checkout form -->
     <aside class="col-3">
-        <form method="get">
-            {{ form|crispy }}
-            <input type="submit" class="btn btn-primary mt-2" value="Apply Filters" />
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if show_new_address_form %}
+                <input type="hidden" name="add_new_address" value="true">
+            {% endif %}
+            
+            <!-- Address Section -->
+            <div class="mb-4">
+                <h5 class="mb-3">Shipping Address</h5>
+                
+                {% if has_addresses and not show_new_address_form %}
+                    <!-- Existing Address Selection -->
+                    {{ form.address|as_crispy_field }}
+                    
+                    <a href="?add_new=true" class="btn btn-outline-secondary btn-sm w-100 mt-2">
+                        + Add New Address
+                    </a>
+                {% else %}
+                    <!-- New Address Fields -->
+                    {% if has_addresses %}
+                        <a href="{% url 'orders:checkout' %}" class="btn btn-link btn-sm p-0 mb-3">
+                            Use existing address
+                        </a>
+                    {% endif %}
+                    
+                    {{ form.address1|as_crispy_field }}
+                    {{ form.address2|as_crispy_field }}
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            {{ form.city|as_crispy_field }}
+                        </div>
+                        <div class="col-6">
+                            {{ form.state|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            {{ form.postal_code|as_crispy_field }}
+                        </div>
+                        <div class="col-6">
+                            {{ form.country|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    {{ form.phone|as_crispy_field }}
+                {% endif %}
+            </div>
+            
+            <!-- Order Details -->
+            <div class="mb-4">
+                <h5 class="mb-3">Order Details</h5>
+                {{ form.comment|as_crispy_field }}
+                {{ form.payment_provider|as_crispy_field }}
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100 mt-2">
+                Place Order - ${{ total }}
+            </button>
         </form>
     </aside>
 
-    <!-- Right content area with horizontal cards -->
+    <!-- Right content area with cart items -->
     <div class="col-9">
         <div class="d-flex flex-column gap-3">
-            {% for guitar in guitar_list %}
-            <div class="card">
-                <div class="row g-0 h-100">
-                    <div class="col-4 d-flex align-items-center">
-                        <img src="{{ guitar.image.url }}" alt="{{ guitar.name }}" class="h-100" style="max-height: 100%;
-                                max-width: 100%;
-                                height: auto;
-                                width: auto;">
+            {% for cart_entry in cart %}
+            <div class="card" id="card-product-{{forloop.counter}}">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{{ cart_entry.item.image.url }}" class="card-img-top" alt="{{ cart_entry.item.name }}"
+                            style="height: 250px; object-fit: cover;">
                     </div>
-                    <div class="col-8">
-                        <div class="card-body h-100 d-flex flex-column">
+                    <div class="col-md-8">
+                        <div class="card-body">
                             <h5 class="card-title">
-                                <a href="{{ guitar.get_absolute_url }}" class="text-decoration-none">{{ guitar.name
-                                    }}</a>
+                                <a href="{{ cart_entry.item.get_absolute_url }}" class="text-decoration-none">
+                                    {{ cart_entry.item.name }}
+                                </a>
                             </h5>
-                            <p class="card-text text-muted">{{ guitar.brand }}</p>
-                            <p class="card-text">${{ guitar.price }}</p>
+                            <p class="card-text text-muted">{{ cart_entry.quantity }} x ${{ cart_entry.item.price }}</p>
+                            <p class="card-text text-success fw-bold">${{ cart_entry.item_total }}</p>
                         </div>
                     </div>
                 </div>

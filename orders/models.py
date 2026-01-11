@@ -3,6 +3,9 @@ from django.conf import settings
 from accounts.models import ShippingAddress
 from products.models import Guitar
 
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+
 # Create your models here.
 
 class Order(models.Model):
@@ -34,7 +37,14 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    product = models.ForeignKey(Guitar, on_delete=models.CASCADE)
+    
+    # generic relation to any product !!!
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    product = GenericForeignKey('content_type', 'object_id')
+    # instead of 
+    # product = models.ForeignKey(Guitar, on_delete=models.CASCADE)
+
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
 

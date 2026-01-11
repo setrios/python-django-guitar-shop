@@ -46,7 +46,7 @@
         </div>
     </div>
     {% endfor %}
-    <hr class="m-4">
+    <hr class="my-4">
     {% for cart_entry in cart.accessories %}
     <div class="card mb-4" id="card-accessory-{{forloop.counter}}">
         <div class="row g-0">
@@ -73,7 +73,6 @@
                         data-action-url="{% url 'cart:delete_accessory' cart_entry.item.pk %}">
                         {% csrf_token %}
                         <input type="hidden" name="card-id" value="{{ forloop.counter }}">
-                        {% comment %} <input type="hidden" name="item-type" value="accessory"> {% endcomment %}
                         <button type="submit" class="btn btn-outline-danger delete-btn">
                             Delete
                         </button>
@@ -86,9 +85,15 @@
     {% endfor %}
 </div>
 
+{% if cart|length > 0 %}
 <div>
     <a class="btn btn-success" href="{% url 'orders:checkout' %}">Checkout</a>
 </div>
+{% else %}
+<h5> 
+    Your cart is empty.
+</h5>
+{% endif %}
 
 <!-- sending AJAX with vanilla JS -->
 <script>

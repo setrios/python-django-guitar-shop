@@ -15,7 +15,6 @@ class Cart():
 
         self.cart = cart
 
-
     def __count_item_total(self, item_price: Decimal, item_quantity: int) -> str:
         # return str(
         #     (item_price * item_quantity).quantize(
@@ -26,7 +25,6 @@ class Cart():
 
         # Since Python 3.3 you can use round() with a Decimal and it will return you a Decimal
         return str(round(item_price * item_quantity, 2))
-
 
     def add_product(self, product: Guitar, quantity=1):
         product_pk = str(product.pk)
@@ -46,7 +44,6 @@ class Cart():
 
         self.session.modified = True
 
-
     def add_accessory(self, accessory: Accessory, quantity=1):
         accessory_pk = str(accessory.pk)
 
@@ -65,7 +62,6 @@ class Cart():
 
         self.session.modified = True
 
-
     def remove_product(self, product: Guitar):
         product_pk = str(product.pk)
         
@@ -73,14 +69,12 @@ class Cart():
             del self.cart['products'][product_pk]
             self.session.modified = True
 
-
     def remove_accessory(self, accessory: Accessory):
         accessory_pk = str(accessory.pk)
         
         if accessory_pk in self.cart['accessories']:
             del self.cart['accessories'][accessory_pk]
             self.session.modified = True
-
 
     def update_product(self, product: Guitar, quantity):
         '''quantity: int - new absolute qunatity been set, not relative'''
@@ -119,7 +113,6 @@ class Cart():
 
         self.session.modified = True
 
-
     def update_accessory(self, accessory: Accessory, quantity):
         '''quantity: int - new absolute qunatity been set, not relative'''
         accessory_pk = str(accessory.pk)
@@ -136,7 +129,6 @@ class Cart():
             raise ValueError(f'{accessory.name} is not in cart')
         
         self.session.modified = True
-
 
     def change_accessory(self, accessory: Accessory, to_add):
         '''Method to increment or decrement accessory quantity'''
@@ -157,7 +149,6 @@ class Cart():
             self.cart['accessories'][accessory_pk]['item_total'] = self.__count_item_total(accessory.price, new_quantity)
 
         self.session.modified = True
-
 
     def clear(self):
         self.session['session_key'] = {}
@@ -191,7 +182,6 @@ class Cart():
                 })
 
         return cart_items
-
 
     # # bad implementation - n + 1 query problem - too many requests to db
     # def get_cart_items(self):
@@ -229,7 +219,6 @@ class Cart():
         else:
             return 0
     
-
     def __len__(self):
         if self.cart:
             products_count = sum(product_entry_data['quantity'] for product_entry_data in self.cart['products'].values())
@@ -260,7 +249,6 @@ class Cart():
                     'quantity': data['quantity'],
                     'item_total': Decimal(data['item_total'])
                 }
-
 
     def products(self):
         product_pks = self.cart['products'].keys()

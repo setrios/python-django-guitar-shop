@@ -11,7 +11,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'cart:cart_summary' %}">Cart <span class="cart-count">({{ cart|length }})</span></a>
+                    <a class="nav-link" href="{% url 'cart:cart_summary' %}">Cart (<span class="cart-count">{{ cart|length }}</span>)</a>
                 </li>
                 
                 {% if request.user.is_authenticated %}
