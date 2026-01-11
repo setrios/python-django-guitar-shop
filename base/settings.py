@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     # local
     'products',
     'accounts',
-    'cart'
+    'cart',
+    'orders'
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'

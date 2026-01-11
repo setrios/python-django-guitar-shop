@@ -61,7 +61,7 @@ class AddressUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         obj = self.get_object()  # returns the ShippingAddress instance being edited
-        return obj.user == self.request.user
+        return obj.user == self.request.user 
     
 
 class AddressDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Checkout{% endblock title %}
+
+{% block content %}
+<h1 class="mb-4">Checkout</h1>
+<div class="row">
+    <!-- Left sidebar with filters -->
+    <aside class="col-3">
+        <form method="get">
+            {{ form|crispy }}
+            <input type="submit" class="btn btn-primary mt-2" value="Apply Filters" />
+        </form>
+    </aside>
+
+    <!-- Right content area with horizontal cards -->
+    <div class="col-9">
+        <div class="d-flex flex-column gap-3">
+            {% for guitar in guitar_list %}
+            <div class="card">
+                <div class="row g-0 h-100">
+                    <div class="col-4 d-flex align-items-center">
+                        <img src="{{ guitar.image.url }}" alt="{{ guitar.name }}" class="h-100" style="max-height: 100%;
+                                max-width: 100%;
+                                height: auto;
+                                width: auto;">
+                    </div>
+                    <div class="col-8">
+                        <div class="card-body h-100 d-flex flex-column">
+                            <h5 class="card-title">
+                                <a href="{{ guitar.get_absolute_url }}" class="text-decoration-none">{{ guitar.name
+                                    }}</a>
+                            </h5>
+                            <p class="card-text text-muted">{{ guitar.brand }}</p>
+                            <p class="card-text">${{ guitar.price }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
