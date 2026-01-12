@@ -6,6 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import ShippingAddress
 
+from orders.models import Order
+
 # Create your views here.
 
 class SignUpView(CreateView):
@@ -25,6 +27,7 @@ class HomePageView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['addresses'] = ShippingAddress.objects.filter(user=self.request.user)
+        context['orders'] = Order.objects.filter(user=self.request.user)
         return context
     
 

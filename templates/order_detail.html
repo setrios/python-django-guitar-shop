@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Order #{{ order.pk }}{% endblock title %}
+
+{% block content %}
+<h1>Order #{{ order.pk }}</h1>
+<hr>
+<p class="btn btn-outline-primary disabled">{{ order.status}}</p>
+<div class="list-group mb-3">
+    <span class="list-group-item">Address line 1: {{ order.address.address1 }}</span>
+    <span class="list-group-item">Address line 2: {{ order.address.address2 }}</span>
+    <span class="list-group-item">City: {{ order.address.city }}</span>
+    <span class="list-group-item">State: {{ order.address.state }}</span>
+    <span class="list-group-item">Postal code: {{ order.address.postal_code }}</span>
+    <span class="list-group-item">Country: {{ order.address.country }}</span>
+    <span class="list-group-item">Created: {{ order.address.created_at }}</span>
+</div>
+<h3>Items</h3>
+<hr>
+<div class="d-flex flex-column gap-3">
+    {% for item in order.items.all %}
+    <div class="card">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ item.product.image.url }}" class="card-img-top" alt="{{ item.product.name }}"
+                    style="height: 250px; object-fit: cover;">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ item.product.name }}
+                    </h5>
+                    <p class="card-text text-muted">{{ item.quantity }} x ${{ item.product.price }}</p>
+                    <p class="card-text text-success fw-bold">${{ item.price }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

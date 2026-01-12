@@ -133,7 +133,6 @@ def checkout_view(request):
     
     return render(request, 'checkout.html', context)
 
-
 def success(request):
     session_id = request.GET.get('session_id')
     
@@ -177,3 +176,10 @@ def cancel(request):
             pass
     
     return render(request, 'cancel.html')
+
+
+from django.views.generic import DetailView
+
+class OrderDetail(DetailView):
+    model = Order
+    template_name = 'order_detail.html'

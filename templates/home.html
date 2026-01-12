@@ -44,4 +44,15 @@
         <a href="{% url 'accounts:address_new' %}" class="btn btn-primary">Add address</a>
     </div>
 </div>
+<hr>
+<div class="row">
+    <h3>Your orders</h3>
+    <div class="list-group">
+    {% for order in orders %}
+        <a href="{% url "orders:order_detail" order.pk %}" class="list-group-item list-group-item-action">
+            #{{ order.pk }} - {{ order.address }} - {{ order.status }}
+        </a>
+    {% endfor %}
+    </div>
+</div>
 {% endblock content %}
