@@ -2,11 +2,17 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
+from django.urls import reverse
+from django.conf import settings
 from .models import Order, OrderItem
 from .forms import CheckoutForm, CheckoutWithNewAddressForm
 from cart.cart import Cart
 
+import stripe
+
 # Create your views here.
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 @login_required
 def checkout_view(request):
@@ -47,7 +53,7 @@ def checkout_view(request):
                     if isinstance(form, CheckoutWithNewAddressForm):
                         address = form.save_address(request.user)
                         order.address = address
-                    
+                
                     order.save()
                     
                     # create order items
@@ -59,13 +65,56 @@ def checkout_view(request):
                             quantity=item['quantity'],
                             price=item['item_total']
                         )
-                    
+
+                    # here payments should be done
+                    if order.payment_provider == 'stripe':
+                        line_items = []
+                        for item in cart_items:
+                            line_items.append({
+                                'price_data': {
+                                    'currency': 'usd',
+                                    'product_data': {
+                                        'name': item['item'].name,
+                                    },
+                                    'unit_amount': int(item['item'].price * 100),
+                                },
+                                'quantity': item['quantity'],
+                            })
+                        
+                        try:
+                            checkout_session = stripe.checkout.Session.create(
+                                payment_method_types=['card'],
+                                line_items=line_items,
+                                mode='payment',
+                                success_url=request.build_absolute_uri(reverse('orders:success')) + '?session_id={CHECKOUT_SESSION_ID}',
+                                cancel_url=request.build_absolute_uri(reverse('orders:cancel')) + f'?order_id={order.id}',
+                                metadata={
+                                    'order_id': str(order.id),
+                                }
+                            )
+                            
+                            # save session ID
+                            order.stripe_payment_intent_id = checkout_session.id
+                            order.save()
+                            
+                            return redirect(checkout_session.url)
+                            
+                        except stripe.error.StripeError as e:
+                            messages.error(request, f'Stripe error: {str(e)}')
+                            order.delete()
+                            raise
+                        except Exception as e:
+                            messages.error(request, f'Payment setup error: {str(e)}')
+                            order.delete()
+                            raise
+
                     # clear the cart
                     cart.clear()
-                    
                     messages.success(request, f'Order #{order.id} created successfully!')
                     return redirect('accounts:home')
-                    
+                
+            except stripe.error.StripeError as e:
+                messages.error(request, f'Stripe error: {str(e)}')    
             except Exception as e:
                 messages.error(request, f'An error occurred while processing your order: {str(e)}')
     else:
@@ -83,3 +132,48 @@ def checkout_view(request):
     }
     
     return render(request, 'checkout.html', context)
+
+
+def success(request):
+    session_id = request.GET.get('session_id')
+    
+    if session_id:
+        try:
+            # verify the session
+            session = stripe.checkout.Session.retrieve(session_id)
+            
+            # get the order
+            order_id = session['metadata']['order_id']
+            order = Order.objects.get(id=order_id, user=request.user)
+            
+            # clear the cart after successful payment
+            cart = Cart(request)
+            cart.clear()
+            
+            messages.success(request, f'Order #{order.id} paid successfully!')
+            
+            context = {
+                'order': order,
+            }
+            return render(request, 'success.html', context)
+            
+        except stripe.error.StripeError as e:
+            messages.error(request, 'Could not verify payment session')
+        except Order.DoesNotExist:
+            messages.error(request, 'Order not found')
+    
+    return render(request, 'success.html')
+
+def cancel(request):
+    order_id = request.GET.get('order_id')
+    
+    if order_id:
+        try:
+            # delete the cancelled order
+            order = Order.objects.get(id=order_id, user=request.user)
+            order.delete()
+            messages.info(request, 'Payment cancelled. Order has been removed.')
+        except Order.DoesNotExist:
+            pass
+    
+    return render(request, 'cancel.html')

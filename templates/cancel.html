@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Payment canceled{% endblock title %}
+
+{% block content %}
+<h1>Payment canceled.</h1>
+<hr>
+<p class="success">Payment was canceled</p>
+<a class="btn btn-success" href="{% url "products:guitar_list" %}">Back to catalog</a>
+{% endblock content %}
