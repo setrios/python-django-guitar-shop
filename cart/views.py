@@ -167,3 +167,39 @@ def delete_accessory(request, accessory_pk):
         'cart_count': len(cart),
         'cart_total': str(cart.get_sub_total_price())
     })
+
+@require_POST
+def update_accessory_quantity(request, accessory_pk):
+    # Check if it's an AJAX request
+    if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid request'
+        }, status=400)
+    
+    cart = Cart(request)
+    accessory = get_object_or_404(Accessory, pk=accessory_pk)
+    action = request.POST.get('action')
+
+    try:
+        if action == 'increase':
+            cart.change_accessory(accessory, 1)
+        elif action == 'decrease':
+            cart.change_accessory(accessory, -1) 
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid action'
+            }, status=400)
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Updated {accessory.name} quantity.',
+            'cart_count': len(cart),
+            'cart_total': str(cart.get_sub_total_price())
+        })
+    except ValueError as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=400)

@@ -10,6 +10,6 @@ urlpatterns = [
     path('product/update/<int:product_pk>/', views.update_product_quantity, name='update_product'),
     path('accessory/add/<int:accessory_pk>/', views.add_accessory_ajax, name='add_accessory'),
     path('accessory/delete/<int:accessory_pk>/', views.delete_accessory, name='delete_accessory'),
-    # path('accessory/update/<int:product_pk>/', views.update_accessory_quantity, name='update_accessory'),
+    path('accessory/update/<int:accessory_pk>/', views.update_accessory_quantity, name='update_accessory'),
 
 ]

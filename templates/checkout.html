@@ -101,9 +101,7 @@
                     <div class="col-md-8">
                         <div class="card-body">
                             <h5 class="card-title">
-                                <a href="{{ cart_entry.item.get_absolute_url }}" class="text-decoration-none">
-                                    {{ cart_entry.item.name }}
-                                </a>
+                                {{ cart_entry.item.name }}
                             </h5>
                             <p class="card-text text-muted">{{ cart_entry.quantity }} x ${{ cart_entry.item.price }}</p>
                             <p class="card-text text-success fw-bold">${{ cart_entry.item_total }}</p>

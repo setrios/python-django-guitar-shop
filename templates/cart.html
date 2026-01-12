@@ -24,10 +24,13 @@
                     <p class="card-text text-muted">{{ cart_entry.quantity }} x ${{ cart_entry.item.price }}</p>
                     <p>
                         <button class="btn btn-outline-primary qty-btn" data-action="decrease"
-                            data-item-id="{{ cart_entry.item.id }}">-</button>
+                            data-item-id="{{ cart_entry.item.id }}"
+                            data-action-url="{% url 'cart:update_product' cart_entry.item.pk %}"
+                            >-</button>
 
                         <button class="btn btn-outline-primary qty-btn" data-action="increase"
-                            data-item-id="{{ cart_entry.item.id }}">+</button>
+                            data-item-id="{{ cart_entry.item.id }}"
+                            data-action-url="{% url 'cart:update_product' cart_entry.item.pk %}">+</button>
                     </p>
                     <p class="card-text text-success">${{ cart_entry.item_total }}</p>
                     <p>
@@ -62,10 +65,13 @@
                     <p class="card-text text-muted">{{ cart_entry.quantity }} x ${{ cart_entry.item.price }}</p>
                     <p>
                         <button class="btn btn-outline-primary qty-btn" data-action="decrease"
-                            data-item-id="{{ cart_entry.item.id }}">-</button>
+                            data-item-id="{{ cart_entry.item.id }}"
+                            data-action-url="{% url 'cart:update_accessory' cart_entry.item.pk %}">-</button>
 
                         <button class="btn btn-outline-primary qty-btn" data-action="increase"
-                            data-item-id="{{ cart_entry.item.id }}">+</button>
+                            data-item-id="{{ cart_entry.item.id }}"
+                            data-action-url="{% url 'cart:update_accessory' cart_entry.item.pk %}"
+                            >+</button>
                     </p>
                     <p class="card-text text-success">${{ cart_entry.item_total }}</p>
                     <p>
@@ -171,7 +177,7 @@
             const data = await response.json();
 
             if (response.ok && data.success) {
-                removeCard(cardId)
+                // removeCard(cardId)
                 updateCartCount(data.cart_count)
                 updateSubtotal(data.cart_total)
 
@@ -194,10 +200,12 @@
         const btn = event.currentTarget
         const action = btn.dataset.action
         const itemId = btn.dataset.itemId
+        const url = btn.dataset.actionUrl
+
 
         btn.disabled = true
 
-        const response = await fetch(`/cart/product/update/${itemId}/`, {
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken'),
