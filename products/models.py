@@ -13,7 +13,7 @@ class Guitar(models.Model):
     image = models.ImageField(upload_to='guitars/')
     name = models.CharField(max_length=255)
     guitar_type = models.ForeignKey('GuitarType', on_delete=models.CASCADE)
-    brand = models.ForeignKey('Brand', on_delete=models.CASCADE)
+    brand = models.ForeignKey('Brand', on_delete=models.CASCADE, related_name='guitar')
     model = models.CharField(max_length=255)
     string_num = models.PositiveIntegerField()
     handedness = models.CharField(max_length=10, choices=HANDEDNESS_CHOICES)
@@ -55,7 +55,7 @@ class GuitarType(models.Model):
 class Accessory(models.Model):
     image = models.ImageField(upload_to='accessories/')
     name = models.CharField(max_length=255)
-    brand = models.ForeignKey('Brand', on_delete=models.CASCADE)
+    brand = models.ForeignKey('Brand', on_delete=models.CASCADE, related_name='accessory')
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField()

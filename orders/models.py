@@ -26,8 +26,9 @@ class Order(models.Model):
     comment = models.TextField(blank=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=255, choices=STATUS_CHOICES, default='pending')
-    payment_provider = models.CharField(max_length=255, choices=PAYMENT_PROVIDER_CHOICES, null=True, blank=True)
+    payment_provider = models.CharField(max_length=255, choices=PAYMENT_PROVIDER_CHOICES, default='stripe')
     stripe_payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

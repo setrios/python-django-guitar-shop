@@ -3,6 +3,7 @@
 {% block title %}Order #{{ order.pk }}{% endblock title %}
 
 {% block content %}
+<a href="{{ request.META.HTTP_REFERER }}"><- back</a>
 <h1>Order #{{ order.pk }}</h1>
 <hr>
 <p class="btn btn-outline-primary disabled">{{ order.status}}</p>

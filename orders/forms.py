@@ -14,7 +14,6 @@ class CheckoutForm(forms.ModelForm):
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         if user:
-            # Filter addresses to only show user's addresses
             self.fields['address'].queryset = ShippingAddress.objects.filter(user=user)
             self.fields['address'].empty_label = 'Select an address'
 

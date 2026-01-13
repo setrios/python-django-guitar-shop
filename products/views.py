@@ -3,12 +3,13 @@ from django.views.generic import ListView, DetailView, FormView
 from django_filters.views import FilterView
 
 from .models import Guitar, Accessory
+from .filters import ProductFilter, AccessoryFilter
 
 # Create your views here.
 
 class GuitarList(FilterView):
     model = Guitar
-    filterset_fields = ['guitar_type', 'brand', 'string_num', 'handedness']
+    filterset_class = ProductFilter
     template_name = 'guitar_list.html'
 
 
@@ -19,7 +20,7 @@ class GuitarDetail(DetailView):
 
 class AccesoriesList(FilterView):
     model = Accessory
-    filterset_fields = ['brand',]
+    filterset_class = AccessoryFilter
     template_name = 'accessory_list.html'
 
 
