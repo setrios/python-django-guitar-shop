@@ -152,11 +152,15 @@ def success(request):
             for product_item in cart.products():
                 product = Guitar.objects.get(pk=product_item['item'].pk)
                 product.stock -= product_item['quantity']
+                if product.stock <= 0:
+                    product.is_avaliable = False
                 product.save()
 
             for accessory_item in cart.accessories():
                 accessory = Accessory.objects.get(pk=accessory_item['item'].pk)
                 accessory.stock -= product_item['quantity']
+                if accessory.stock <= 0:
+                    accessory.is_avaliable = False
                 accessory.save()
 
             # clear the cart after successful payment
