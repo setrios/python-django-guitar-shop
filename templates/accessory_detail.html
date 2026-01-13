@@ -14,7 +14,6 @@
         <h3>${{ accessory.price }}</h3>
         <small class="mb-3">{{ accessory.stock }}</small>
         <p>{{ accessory.description }}</p>
-        <div id="cart-notification" class="alert d-none" role="alert"></div>
         <form id="add-to-cart-form" data-action-url="{% url 'cart:add_accessory' accessory.pk %}">
             {% csrf_token %}
             <label for="quantity" class="form-label">Quantity:</label>
@@ -32,6 +31,7 @@
                 Add to Cart
             </button>
         </form>
+        <div id="cart-notification" class="alert d-none mt-3" role="alert"></div>
     </div>
 </div>
 
@@ -60,7 +60,7 @@
         const notification = document.getElementById('cart-notification')
 
         notification.textContent = message
-        notification.className = `alert alert-${type}`
+        notification.className = `alert alert-${type} mt-3`
         notification.classList.remove('d-none')
 
         setTimeout(() => {

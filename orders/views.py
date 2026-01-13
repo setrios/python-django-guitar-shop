@@ -7,6 +7,7 @@ from django.conf import settings
 from .models import Order, OrderItem
 from .forms import CheckoutForm, CheckoutWithNewAddressForm
 from cart.cart import Cart
+from products.models import Guitar, Accessory
 
 import stripe
 
@@ -145,8 +146,20 @@ def success(request):
             order_id = session['metadata']['order_id']
             order = Order.objects.get(id=order_id, user=request.user)
             
-            # clear the cart after successful payment
             cart = Cart(request)
+
+            # update produts quantities
+            for product_item in cart.products():
+                product = Guitar.objects.get(pk=product_item['item'].pk)
+                product.stock -= product_item['quantity']
+                product.save()
+
+            for accessory_item in cart.accessories():
+                accessory = Accessory.objects.get(pk=accessory_item['item'].pk)
+                accessory.stock -= product_item['quantity']
+                accessory.save()
+
+            # clear the cart after successful payment
             cart.clear()
             
             messages.success(request, f'Order #{order.id} paid successfully!')

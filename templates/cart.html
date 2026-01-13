@@ -38,7 +38,6 @@
                         data-action-url="{% url 'cart:delete_product' cart_entry.item.pk %}">
                         {% csrf_token %}
                         <input type="hidden" name="card-id" value="{{ forloop.counter }}">
-                        {% comment %} <input type="hidden" name="item-type" value="product"> {% endcomment %}
                         <button type="submit" class="btn btn-outline-danger delete-btn">
                             Delete
                         </button>
