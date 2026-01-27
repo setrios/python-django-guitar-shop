@@ -1,5 +1,7 @@
 # Guitar Shop
 
+![alt text](screenshots/image.png)
+
 E-commerce site built with Django, designed for selling guitars and musical accessories. This project demonstrates a fully functional shop with real-time payments, inventory management, and filtering system.
 
 ## Key Features
