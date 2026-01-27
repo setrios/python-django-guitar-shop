@@ -3,6 +3,10 @@
 {% block title %}Guitar Catalog{% endblock title %}
 {% block content %}
 <h1 class="mb-4">Guitar Catalog</h1>
+<form class="d-flex mb-4" action="{% url 'products:guitar_list' %}" method="get">
+    <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">
+    <button class="btn btn-outline-primary" type="submit">Search</button>
+</form>
 <div class="row">
     <!-- Left sidebar with filters -->
     {% comment %} 
@@ -56,7 +60,7 @@
                         <img src="{{ guitar.image.url }}"
                             alt="{{ guitar.name }}"
                             class="card-img-top"
-                            style="height: 250px; object-fit: cover;">
+                            style="max-height: 250px; object-fit: cover;">
                     </div>
                     <div class="col-8">
                         <div class="card-body h-100 d-flex flex-column">

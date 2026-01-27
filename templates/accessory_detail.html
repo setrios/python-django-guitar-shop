@@ -12,7 +12,7 @@
         <h1>{{ accessory.name }}</h1>
         <p class="text-muted">{{ accessory.brand }}</p>
         <h3>${{ accessory.price }}</h3>
-        <small class="mb-3">{{ accessory.stock }}</small>
+        <small class="mb-3">In Stock: {{ accessory.stock }}</small>
         <p>{{ accessory.description }}</p>
         <form id="add-to-cart-form" data-action-url="{% url 'cart:add_accessory' accessory.pk %}">
             {% csrf_token %}
